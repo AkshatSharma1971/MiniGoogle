@@ -1,0 +1,197 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>MiniGoogle</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap">
+<style>
+/* Layout: a 1998 portal. Centered logo and search box on the home page; on results, a slim header
+   and two columns side by side (Old Way in red, PageRank in green) that stack on a phone. */
+:root {
+  --bg: #ffffff;
+  --fg: #000000;
+  --link: #0000cc;
+  --old: #cc0000;
+  --pr: #007a00;
+  --muted: #555555;
+  --face: #dcdcdc;
+  --rule: #999999;
+  --logo-font: "Libre Baskerville", "Times New Roman", Georgia, serif;
+  --ui-font: Arial, Helvetica, sans-serif;
+  --text-font: "Times New Roman", Times, serif;
+  color-scheme: light;
+}
+html, body { background: var(--bg); color: var(--fg); }
+body {
+  font-family: var(--text-font);
+  font-size: 16px;
+  padding-block: 24px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 980px; margin: 0 auto; }
+.logo { font-family: var(--logo-font); font-weight: 700; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; text-shadow: 2px 2px 0 rgba(0,0,0,.22); }
+.logo span.b { color: #0033cc; } .logo span.r { color: #cc0000; } .logo span.y { color: #e8a800; } .logo span.g { color: #008a00; }
+.home { text-align: center; padding-top: 6vh; }
+.home .logo { font-size: clamp(34px, 11vw, 78px); }
+.tag { font-family: var(--ui-font); font-size: 13px; color: var(--muted); margin: 10px 0 26px; }
+form { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.box { width: min(440px, 100%); font: 16px var(--ui-font); padding: 4px 6px; border: 2px inset #888; background: #fff; color: #000; }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+button { font: 13px var(--ui-font); background: var(--face); color: #000; border: 2px outset #f4f4f4; padding: 4px 12px; cursor: pointer; }
+button:active { border-style: inset; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.try { font-family: var(--ui-font); font-size: 13px; margin-top: 22px; color: var(--muted); }
+.try a, a.lnk { color: var(--link); text-decoration: underline; cursor: pointer; }
+.foot { font-family: var(--ui-font); font-size: 11px; color: var(--muted); margin-top: 40px; text-align: center; }
+.top { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+.top .logo { font-size: 34px; cursor: pointer; }
+.top form { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; }
+.top .box { width: min(300px, 70vw); }
+.bar { font-family: var(--ui-font); font-size: 13px; background: #e8eefc; padding: 4px 8px; margin: 12px 0; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 20px; align-items: start; }
+.sec { min-width: 0; }
+.sec h2 { margin: 0; font: bold 15px var(--ui-font); color: #fff; padding: 6px 10px; }
+.sec.old h2 { background: var(--old); } .sec.pr h2 { background: var(--pr); }
+.sec .sub { font: 12px var(--ui-font); color: var(--muted); margin: 6px 0 12px; }
+.sec.old { border-top: 3px solid var(--old); } .sec.pr { border-top: 3px solid var(--pr); }
+.res { margin: 0 0 18px; }
+.res .t { font-size: 18px; }
+.res .t .n { font: bold 13px var(--ui-font); margin-right: 6px; }
+.old .n { color: var(--old); } .pr .n { color: var(--pr); }
+.res .d { font-size: 15px; margin: 2px 0; overflow-wrap: anywhere; }
+.res .m { font: 12px var(--ui-font); color: var(--muted); }
+.meter { height: 6px; background: #eee; margin: 4px 0 0; max-width: 240px; }
+.meter i { display: block; height: 100%; }
+.old .meter i { background: var(--old); } .pr .meter i { background: var(--pr); }
+.none { font-size: 15px; }
+details { font-family: var(--ui-font); font-size: 13px; margin-top: 26px; border-top: 1px solid var(--rule); padding-top: 12px; }
+summary { cursor: pointer; color: var(--link); }
+.tw { overflow-x: auto; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { border: 1px solid var(--rule); padding: 4px 8px; text-align: left; font-variant-numeric: tabular-nums; }
+th { background: var(--face); }
+td.p { color: var(--pr); font-weight: bold; }
+.formula { margin: 10px 0 0; color: var(--muted); }
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+// The mini web: each page, its text, and the pages it links to.
+var PAGES = [
+  { id: 1, url: "pune-food-guide.com",       text: "Where to eat in Pune - vada pav and biryani and pizza",          links: [2] },
+  { id: 2, url: "best-pizza-pune.com",       text: "Fresh wood-fired pizza made daily - try our cheese pizza",       links: [1, 3] },
+  { id: 3, url: "college-canteen-blog.com",  text: "Student reviews of canteen food and chai and Friday pizza",      links: [2, 4] },
+  { id: 4, url: "pizza-recipes-home.com",    text: "Make pizza at home - pizza dough and pizza sauce",               links: [2, 5] },
+  { id: 5, url: "cheap-eats-pune.com",       text: "Good food under 100 rupees - misal and dosa and pizza slices",   links: [2] },
+  { id: 6, url: "pizza-pizza-pizza.com",     text: "pizza pizza pizza pizza pizza pizza pizza pizza pizza pizza",    links: [1] }
+];
+var D = 0.85;
+var byId = {};
+PAGES.forEach(function (p) { byId[p.id] = p; p.words = (p.text.toLowerCase().match(/[a-z0-9]+/g) || []); });
+
+// PageRank (Brin and Page): PR(p) = (1-d)/N + d * sum over q linking to p of PR(q)/outlinks(q)
+function pagerank() {
+  var N = PAGES.length, pr = {};
+  PAGES.forEach(function (p) { pr[p.id] = 1 / N; });
+  for (var i = 0; i < 100; i++) {
+    var nx = {};
+    PAGES.forEach(function (p) { nx[p.id] = (1 - D) / N; });
+    PAGES.forEach(function (p) {
+      if (p.links.length) p.links.forEach(function (t) { nx[t] += D * pr[p.id] / p.links.length; });
+      else PAGES.forEach(function (t) { nx[t.id] += D * pr[p.id] / N; });
+    });
+    pr = nx;
+  }
+  return pr;
+}
+var PR = pagerank();
+var INBOUND = {};
+PAGES.forEach(function (p) { INBOUND[p.id] = []; });
+PAGES.forEach(function (p) { p.links.forEach(function (t) { INBOUND[t].push(p.id); }); });
+
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function terms(q) { return (q.toLowerCase().match(/[a-z0-9]+/g) || []); }
+function count(p, ts) { var c = 0; p.words.forEach(function (w) { if (ts.indexOf(w) >= 0) c++; }); return c; }
+function hl(text, ts) {
+  var out = esc(text);
+  ts.forEach(function (t) { out = out.replace(new RegExp("\\b(" + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")\\b", "gi"), "<b>$1</b>"); });
+  return out;
+}
+function logo(cls) {
+  var L = [["M","b"],["i","r"],["n","y"],["i","b"],["G","g"],["o","r"],["o","y"],["g","b"],["l","g"],["e","r"]];
+  return '<div class="logo ' + (cls || "") + '" aria-label="MiniGoogle">' + L.map(function (x) { return '<span class="' + x[1] + '">' + x[0] + "</span>"; }).join("") + "</div>";
+}
+var app = document.getElementById("app");
+
+function home() {
+  app.innerHTML =
+    '<div class="home">' + logo() +
+    '<div class="tag">Search the Mini Web: 6 pages, ranked two ways</div>' +
+    '<form id="f"><input class="box" id="q" type="text" autocomplete="off" aria-label="Search the mini web" placeholder="Enter a word, like pizza">' +
+    '<div class="btns"><button type="submit" id="go">MiniGoogle Search</button><button type="button" id="lucky">I\'m Feeling Lucky</button></div></form>' +
+    '<div class="try">Try: <a data-q="pizza">pizza</a> &middot; <a data-q="biryani">biryani</a> &middot; <a data-q="chai">chai</a> &middot; <a data-q="misal">misal</a> &middot; <a data-q="pune">pune</a></div>' +
+    '<div class="foot">&copy; 2026 MiniGoogle. A classroom search engine. Old Way in red, PageRank in green.</div></div>';
+  wire();
+}
+
+function wire() {
+  var f = document.getElementById("f"), q = document.getElementById("q");
+  f.addEventListener("submit", function (e) { e.preventDefault(); results(q.value, false); });
+  document.getElementById("lucky").addEventListener("click", function () { results(q.value, true); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-q]"), function (a) {
+    a.addEventListener("click", function () { results(a.getAttribute("data-q"), false); });
+  });
+  var lg = document.querySelector(".top .logo"); if (lg) lg.addEventListener("click", home);
+  q.focus();
+}
+
+function card(p, rank, label, meterPct, cls) {
+  return '<div class="res"><div class="t"><span class="n">' + rank + '.</span><a class="lnk" href="#" onclick="return false">' + esc(p.url) + '</a></div>' +
+    '<div class="d">' + hl(p.text, window.__ts) + '</div>' +
+    '<div class="m">' + esc(p.url) + ' &mdash; ' + label + '</div>' +
+    '<div class="meter" aria-hidden="true"><i style="width:' + meterPct + '%"></i></div></div>';
+}
+
+function results(raw, lucky) {
+  var q = (raw || "").trim();
+  if (!q) { home(); return; }
+  var ts = terms(q); window.__ts = ts;
+  var hits = PAGES.map(function (p) { return { p: p, c: count(p, ts) }; }).filter(function (h) { return h.c > 0; });
+  var oldRank = hits.slice().sort(function (a, b) { return b.c - a.c || a.p.id - b.p.id; });
+  var prRank = hits.slice().sort(function (a, b) { return PR[b.p.id] - PR[a.p.id]; });
+  if (lucky) { oldRank = oldRank.slice(0, 1); prRank = prRank.slice(0, 1); }
+  var maxC = oldRank.length ? Math.max.apply(null, hits.map(function (h) { return h.c; })) : 1;
+  var maxP = Math.max.apply(null, PAGES.map(function (p) { return PR[p.id]; }));
+
+  var oldHtml = oldRank.length ? oldRank.map(function (h, i) {
+    return card(h.p, i + 1, "<b>" + h.c + "</b> time" + (h.c === 1 ? "" : "s") + " (word count)", Math.round(h.c / maxC * 100));
+  }).join("") : '<div class="none">Your search did not match any documents.</div>';
+  var prHtml = prRank.length ? prRank.map(function (h, i) {
+    return card(h.p, i + 1, "PageRank <b>" + PR[h.p.id].toFixed(4) + "</b> &middot; " + INBOUND[h.p.id].length + " page" + (INBOUND[h.p.id].length === 1 ? "" : "s") + " link here", Math.round(PR[h.p.id] / maxP * 100));
+  }).join("") : '<div class="none">Your search did not match any documents.</div>';
+
+  var rows = PAGES.slice().sort(function (a, b) { return PR[b.id] - PR[a.id]; }).map(function (p) {
+    return "<tr><td>" + esc(p.url) + "</td><td>" + (p.links.map(function (i) { return esc(byId[i].url); }).join(", ") || "none") + "</td><td>" +
+      (INBOUND[p.id].map(function (i) { return esc(byId[i].url); }).join(", ") || "none") + '</td><td class="p">' + PR[p.id].toFixed(4) + "</td></tr>";
+  }).join("");
+
+  app.innerHTML =
+    '<div class="top">' + logo() +
+    '<form id="f"><input class="box" id="q" type="text" autocomplete="off" aria-label="Search the mini web" value="' + esc(q) + '">' +
+    '<button type="submit">MiniGoogle Search</button><button type="button" id="lucky">I\'m Feeling Lucky</button></form></div>' +
+    '<div class="bar"><span>Searched the mini web for <b>' + esc(q) + '</b>.</span><span>' + hits.length + ' of ' + PAGES.length + ' pages matched' + (lucky ? " (lucky mode: top result only)" : "") + '</span></div>' +
+    '<div class="cols">' +
+    '<section class="sec old"><h2>The Old Way: most frequent word</h2><div class="sub">Pages are ordered by how many times your word appears in the page. Nothing else counts.</div>' + oldHtml + '</section>' +
+    '<section class="sec pr"><h2>The PageRank Way: Page and Brin</h2><div class="sub">Pages that contain your word, ordered by PageRank: how many pages link to them, and how important those pages are.</div>' + prHtml + '</section>' +
+    '</div>' +
+    '<details><summary>How PageRank scored the whole mini web</summary><div class="tw"><table><thead><tr><th>Page</th><th>Links to</th><th>Linked from</th><th>PageRank</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<p class="formula">PR(p) = (1 &minus; d) / N + d &times; &Sigma; PR(q) / L(q), summed over every page q that links to p. L(q) is the number of links on q, d = 0.85, N = 6, repeated 100 times until the scores settle. A page nobody links to keeps only the base score, however many times it repeats a word.</p></details>' +
+    '<div class="foot">&copy; 2026 MiniGoogle</div>';
+  wire();
+  document.getElementById("q").blur();
+}
+
+home();
+</script>
+
+</body></html>
